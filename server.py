@@ -30,6 +30,9 @@ while True:
             if message:
                 message = message.decode().lower()
                 hall.handle_msg(person,message)
+            else:
+                person.socket.close()
+                conn_list.remove(person)
     for sock in error_sockets:
         sock.close()
         conn_list.remove(sock)
