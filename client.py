@@ -22,9 +22,8 @@ sock_list=[sys.stdin,conn]
 message_pre=""
 
 while 1:
-    read_persons= select.select(sock_list, [], [],1)[0]
-    if msvcrt.kbhit():
-        read_persons.append(sys.stdin)
+    read_persons,write_persons,error_sockets= select.select(sock_list, [], [])
+  
     for sock in read_persons:
         if sock in conn:
             message=sock.recv(4096)
