@@ -2,7 +2,6 @@ import socket
 import sys
 import select
 import util
-import msvcrt
 from util import QUIT_STRING, Room,Person,Hall
 
 if len(sys.argv) <2:
