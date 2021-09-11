@@ -18,7 +18,7 @@ conn_list=[]
 conn_list.append(sock)
 
 while True:
-    read_persons, write_persons, error_sockets = select.select(conn_list, [], [],1)
+    read_persons, write_persons, error_sockets = select.select(conn_list, [], [])
     for person in read_persons:
         if person is sock:
             new_sock,addr =person.accept()
@@ -26,7 +26,7 @@ while True:
             conn_list.append(new_person)
             hall.new_person(new_person)
         else:
-            message = person.sock.recv(4096)
+            message = person.socket.recv(4096)
             if message:
                 message = message.decode().lower()
                 hall.handle_msg(person,message)
