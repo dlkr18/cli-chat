@@ -24,7 +24,7 @@ while 1:
     read_persons,write_persons,error_sockets= select.select(sock_list, [], [])
   
     for sock in read_persons:
-        if sock in conn:
+        if sock is conn:
             message=sock.recv(4096)
             if not message:
                 print("Server Down!")
