@@ -1,4 +1,4 @@
-#from _typeshed import Self
+
 import socket
 import pdb
 
@@ -23,17 +23,17 @@ class Hall:
         self.room_person_map = {} # {playerName: roomName}
 
     def new_person(self, person):
-        person.sock.sendall(b'Welcome!.please tell us your name: \n')
+        person.socket.sendall(b'Welcome!\nplease tell us your name: \n')
     
     def list_rooms(self,person):
         if len(self.rooms)==0:
             message = 'No active rooms present currently! Create your own group.\n' + 'Use [<join> room_name] to create a room.\n'
-            person.sock.sendall(message.encode())
+            person.socket.sendall(message.encode())
         else:
             message = 'Current rooms..\n'
             for room in self.rooms:
                 message += room + ": " +str(len(self.rooms[room].persons)) + " person(s)\n"
-            person.sock.sendall(message.encode())
+            person.socket.sendall(message.encode())
 
     def handle_msg(self,person,msg):
 
@@ -51,7 +51,7 @@ class Hall:
             name =msg.split()[1]
             person.name = name
             print("New connection from:",person.name)
-            person.sock.sendall(instructions)
+            person.socket.sendall(instructions)
         
         elif "<join>" in msg:
             same_room =False
@@ -59,7 +59,7 @@ class Hall:
                 room_name = msg.split()[1]
                 if person.name in self.room_person_map: # switching?
                     if self.room_person_map[person.name] == room_name:
-                        person.sock.sendall(b'You are already in room: ' + room_name.encode())
+                        person.socket.sendall(b'You are already in room: ' + room_name.encode())
                         same_room = True
                     else: # switch
                         old_room = self.room_person_map[person.name]
@@ -78,10 +78,10 @@ class Hall:
             self.list_rooms(person) 
 
         elif "<manual>" in msg:
-            person.sock.sendall(instructions)
+            person.socket.sendall(instructions)
         
         elif "<quit>" in msg:
-            person.sock.sendall(QUIT_STRING.encode())
+            person.socket.sendall(QUIT_STRING.encode())
             self.remove_person(person)
 
         else:
@@ -89,7 +89,7 @@ class Hall:
                 self.rooms[self.room_person_map[person.name]].broadcast_msg(person, msg.encode())
             else:
                 msg = 'You are currently not in any room! \n' + 'Use [<list>] to see available rooms! \n' + 'Use [<join> room_name] to join a room! \n'
-                person.sock.sendall(msg.encode())
+                person.socket.sendall(msg.encode())
 
     def remove_person(self,person):
         if person.name in self.room_person_map:
@@ -108,27 +108,27 @@ class Room:
         self.name = name
     
     def new_person(self, person):
-        message = self.name +" "+ "welcomes " + person.name + '\n'
+        message = self.name +" "+ "welcomes " + person.name + "\n"
         for persons in self.persons:
-            persons.sock.sendall(msg.encode())
+            persons.socket.sendall(message.encode())
 
     def broadcast_msg(self, person, msg):
         message = person.name.encode() + b":"+msg
         for persons in self.persons:
-            persons.sock.sendall(message)
+            persons.socket.sendall(message)
     
     def remove_person(self,person):
         self.persons.remove(person)
-        message = person.name.encode + b"has left the room\n"
+        message = person.name.encode() + b"has left the room\n"
         self.broadcast_msg(person, message)
 
 
         
 
 class Person:
-    def __init__(self, sock , name ="new"):
-        sock.setblocking(0)
-        self.sock = sock
+    def __init__(self, socket , name ="new"):
+        socket.setblocking(0)
+        self.socket = socket
         self.name = name
 
     def filenum(self):
